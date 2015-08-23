@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+	">
+
+
+
+	<import resource="./test.xml" />
+
+
+
+	<bean id="baseAction" class="struts.action.BaseAction"
+		scope="prototype">
+		<property name="baseDAO" >
+		<ref local="baseDAO"/>
+		</property>
+
+	</bean>
+
+
+
+	<!-- 数据源配置 （如果配置在hibernate.cfg.xml中事务不自动提交） -->
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName"
+			value="oracle.jdbc.driver.OracleDriver">
+		</property>
+		<property name="url"
+			value="jdbc:oracle:thin:@192.168.1.2:1521:orcl">
+		</property>
+		<property name="username" value="ztstation"></property>
+		<property name="password" value="ztstation"></property>
+	</bean>
+
+	<!-- 使用JNDI连接方式的数据源 -->
+	<!--  <bean id="dataSource"
+		class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+		<value>java:comp/env/jdbc/ztstation</value>
+		</property>
+		</bean>
+	-->
+
+
+	<!-- hibernate 的　sessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.Oracle9Dialect
+				</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+
+		</property>
+		<!-- 引入hibernate配置文件中的反向类 -->
+		<property name="configLocation"
+			value="classpath:hibernate.cfg.xml">
+		</property>
+	</bean>
+
+	<!-- 配置hibernate 的事务管理 -->
+	<!--
+		使用HibernateTransactionManager类，该类是PlatformTransactionManager接口针对
+		Hibernate持久化连接的特定实现
+	-->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<!-- 需要依赖注入一个SessionFactory Bean的引用 -->
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+
+	<!-- 使用TX配置实现事务管理   配置事务策略-->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save" propagation="REQUIRED"></tx:method>
+			<tx:method name="delete" propagation="REQUIRED"></tx:method>
+			<tx:method name="uporsave" propagation="MANDATORY"></tx:method>
+
+		</tx:attributes>
+
+	</tx:advice>
+
+	<aop:config>
+	<!-- 方法配置参看SSH集成一书542页 -->
+		<aop:pointcut id="productServiceMethods"
+			expression="execution(* service.*.* (..))" />
+		<aop:advisor advice-ref="txAdvice"
+			pointcut-ref="productServiceMethods" />
+	</aop:config>
+
+
+
+	<!-- 使用DataSourceTransactionManager类，该类是PlatformTransactionManager接口 -->
+	<!-- 针对采用数据源连接的特定实现（仅针对jdbc的事务配置,这里不使用）  -->
+	<!--
+		<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		
+		<property name="dataSource"> <ref bean="dataSource" /> </property>
+		</bean>
+	-->
+
+
+
+
+	<!-- 通用 service 和 DAO -->
+	<bean id="baseDAO" class="service.impl.BaseDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	
+	
+
+
+
+<!-- DAO bean 基本上不用 -->
+	<bean id="personDAO" class="hibernate.pojo.PersonDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="PrisDAO" class="hibernate.pojo.PrisDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="OperatorsDAO" class="hibernate.pojo.OperatorsDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="RolepriDAO" class="hibernate.pojo.RolepriDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="RolesDAO" class="hibernate.pojo.RolesDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	<bean id="OperatorroleDAO" class="hibernate.pojo.OperatorroleDAO">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean></beans>

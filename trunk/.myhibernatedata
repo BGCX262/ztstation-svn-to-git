@@ -1,0 +1,22 @@
+#
+#Wed Aug 05 15:01:37 CST 2009
+genBasicCompId=false
+sessionFactoryName=
+profile=
+daoSFId=sessionFactory
+version=3.2
+jndiPath=
+detectM2M=false
+reStrategyClass=
+springDaoFile=WebRoot/WEB-INF/applicationContext.xml
+useJavaTypes=true
+keyGenerator=sequence
+libInstallFolder=WebRoot/WEB-INF/lib
+addLibs2Project=true
+genVersionTag=false
+sessionFactoryId=
+basePersistenceClass=hibernate.pojo.BasePOJO
+reSettingsFile=
+configFile=/ztstation/src/hibernate.cfg.xml
+createConfigFile=false
+addLibs2Classpath=true

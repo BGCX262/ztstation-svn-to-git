@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+      "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+      "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="json" namespace="/system" extends="json-default">
+
+		<!-- 用户登陆验证 -->
+		<action name="login" class="struts.action.system.Login">
+			<result type="json" />
+		</action>
+
+		<action name="getTree" class="struts.action.system.GetTree">
+			<result type="json" />
+		</action>
+
+		<action name="getWindow"
+			class="struts.action.system.GetWindow">
+			<result type="json" />
+		</action>
+		
+		<action name='listuser' class='struts.action.system.ListUser'>
+		<result type='json'/>
+		</action>
+
+	</package>
+
+	<!-- 配置文件添加结束 -->
+
+</struts>
+
